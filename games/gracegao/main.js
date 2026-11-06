@@ -7,6 +7,7 @@ import { createWaves } from './waves.js';
 import { createTide } from './tide.js';
 import { createShop } from './shop.js';
 import { createUI } from './ui.js';
+import { createAudio } from './audio.js';
 
 // SECTION: renderer and camera.
 const scene = new THREE.Scene();
@@ -27,6 +28,9 @@ addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 });
+
+// SECTION: audio — created up front, but the browser only lets sound start after the first interaction.
+const audio = createAudio();
 
 scene.add(new THREE.HemisphereLight('#ffffff', '#8fb6c9', 1.6));
 const sun = new THREE.DirectionalLight('#fff3d6', 2.0);
@@ -147,6 +151,7 @@ function dropRandomItem() {
 }
 
 function onPickup(type) {
+  audio.chime();
   state.inventory[type.id] += 1;
   state.total += 1;
   ui.updateInventory(state.inventory, state.total);
@@ -154,6 +159,7 @@ function onPickup(type) {
 }
 
 function onWaveHit(fromX, fromZ) {
+  audio.splash();
   player.knockback(fromX, fromZ);
   ui.setMessage('A wave knocked you back!');
   if (Math.random() < T.DROP_CHANCE) dropRandomItem();
@@ -226,11 +232,17 @@ function startDay() {
   resetDay();
   state.phase = 'low_tide';
   ui.hideTitle();
+  audio.start();          // this runs on a click/key press, so the browser allows sound now
+  audio.startAmbient();   // calm music and lapping waves play all through the day
 }
 
+// The first interaction of any kind unlocks audio (autoplay policy); M toggles mute.
+addEventListener('pointerdown', () => audio.start());
 addEventListener('keydown', (e) => {
   if (e.repeat) return;
+  audio.start();
   const k = e.key.toLowerCase();
+  if (k === 'm') { ui.setMessage(audio.toggleMute() ? 'Sound off' : 'Sound on'); return; }
   if (k === 'r') { startDay(); return; }
   if ((state.phase === 'title' || state.phase === 'day_end') && (k === ' ' || k === 'enter')) { startDay(); return; }
   if (state.phase === 'high_tide' && k === T.CRAFT_KEY && shop.isNearCounter(player.position)) craft();
@@ -316,4 +328,4 @@ renderer.setAnimationLoop(() => {
 });
 
 // Handy for the browser console while building.
-window.game = { player, collectibles, waves, tide, shop, state };
+window.game = { player, collectibles, waves, tide, shop, state, audio };

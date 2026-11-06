@@ -179,3 +179,29 @@ export const ISLET_PALM_LEAF_COLOR = '#4f9d5b';
 export const ISLET_LOCK_COLOR = '#f0c24b';       // the little padlock that marks the islet as locked
 export const ISLET_LABEL_Y = 2.7;                // height of the "Locked" label above the islet
 export const ISLET_LABEL_TEXT = 'Locked';
+
+// --- Audio (Web Audio API only, no files). Everything stays calm and quiet. ---
+export const MASTER_VOLUME = 0.3;        // overall loudness; keep low for a relaxing mix
+export const MUSIC_VOLUME = 0.5;         // music + ambience bus, relative to master
+export const SFX_VOLUME = 0.7;           // pickup chimes and splashes, relative to master
+
+// Calm background music: one soft note every few seconds from a gentle pentatonic set.
+export const MUSIC_NOTE_INTERVAL = 2.6;  // seconds between notes
+export const MUSIC_NOTE_LENGTH = 6.0;    // seconds each note swells in and fades out
+export const MUSIC_NOTE_GAIN = 0.5;      // per-note level within the music bus
+export const MUSIC_NOTES = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 440.0, 392.0, 329.63];
+
+// Lapping waves: looped filtered noise with a slow swell.
+export const WAVE_LEVEL = 0.3;           // noise bed level within the music bus
+export const WAVE_LFO_RATE = 0.09;       // Hz, how slowly the swell breathes
+export const WAVE_LFO_DEPTH = 0.15;      // how far the swell rises and falls (keep below WAVE_LEVEL)
+export const WAVE_FILTER_HZ = 480;       // lowpass cutoff: soft, muffled water
+
+// Pickup chime: a couple of soft bell tones.
+export const CHIME_NOTES = [1046.5, 1318.5];  // C6, E6
+export const CHIME_VOLUME = 0.35;
+export const CHIME_DECAY = 1.6;
+
+// Splash: a short filtered noise wash.
+export const SPLASH_VOLUME = 0.5;
+export const SPLASH_DECAY = 0.45;
